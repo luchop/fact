@@ -1,5 +1,4 @@
-
 <div id="pie" class='span-24 center'>
 <hr />
-<p>Unidad de Sistemas e Informaci&oacute;n estad&iacute;stica. SIE-UPEA. 2012 - <strong>Regin</strong> - Sistema de matriculaci&oacute;n</p>
+<p>Edif. Finanzas Premium - Direcci&oacute;n: Bol&iacute;var 202 Piso 3 Of 302 - Fonos : 57 / 338671-338672 cel. 98959356</p>
 </div>

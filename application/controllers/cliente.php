@@ -6,27 +6,31 @@ class Cliente extends CI_Controller {
 	
 	function __construct() {
         parent::__construct();
-        $this->Cliente = 0;
+        $this->Cliente = 1;
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
     }
 
     function Index() {
-		$this->NuevoCliente();
+		$this->Nuevo();
     }
 
-    function NuevoCliente() {
+    function Nuevo() {
 		$this->funciones->VerificaSesion();
 		
 		$this->form_validation->set_rules('Nombre', '"nombre"', 'trim');
         $this->form_validation->set_rules('Contacto', '"contacto"', 'trim');
+		$this->form_validation->set_rules('NIT', '"RUT"', 'trim');
         $this->form_validation->set_rules('Correo', 'correo electr&oacute;nico', 'trim');
         $this->form_validation->set_rules('Correo', '"correo"', 'callback_CorreoNuevo');
 
         $data['EsCliente'] = $this->Cliente;
+		$data['ComboActividad'] = $this->modelo_actividad->ComboActividad();
         if ($this->form_validation->run()) {
-			$this->modelo_cliente->Insert($this->input->post('Nombre'), $this->input->post('Contacto'),
-						$this->input->post('NIT'), $this->input->post('Direccion'), $this->input->post('Telefono'),
-						$this->input->post('Correo'), $this->input->post('Notas'), $this->Cliente);
+			$CodPersona = $this->modelo_persona->Insert($this->input->post('Nombre'), $this->input->post('Contacto'),
+														$this->input->post('NIT'), $this->input->post('Direccion'), $this->input->post('Zona'),
+														$this->input->post('Ciudad'), $this->input->post('Telefono'),
+														$this->input->post('Correo'), $this->input->post('Notas'));
+			$this->modelo_cliente->Insert($CodPersona, $this->input->post('CodActividad'), $this->input->post('Limite'));
 			$data['Mensaje'] = "Se ha registrado un nuevo cliente.";                        
             $data['VistaPrincipal'] = 'vista_mensaje';            
         } else
@@ -44,7 +48,7 @@ class Cliente extends CI_Controller {
                 
         if ($this->form_validation->run()) {
             $registros = $this->modelo_cliente->Busqueda($this->input->post('Nombre'),$this->input->post('Contacto'), 
-			                                             $this->input->post('NIT'), $this->input->post('Correo'), $this->Cliente);
+			                                             $this->input->post('NIT'), $this->input->post('Correo'));  //$this->Cliente
 
             if( $Modificacion==1 )
                 $Vista = 'vista_modifica_cliente';
@@ -57,7 +61,8 @@ class Cliente extends CI_Controller {
                 $this->load->view('vista_maestra', $data);
             } else if ($registros->num_rows() == 1) {            //solo un registro encontrado                
                 $data['Fila'] = $registros->row();
-                $data['VistaPrincipal'] = $Vista;                      //'vista_modifica_cliente' o 'vista_consulta_cliente';
+                $data['ComboActividad'] = $this->modelo_actividad->ComboActividad($data['Fila']->CodActividadEconomica);
+				$data['VistaPrincipal'] = $Vista;                      //'vista_modifica_cliente' o 'vista_consulta_cliente';
                 $this->load->view('vista_maestra', $data);
             } else {                                             // varios registros encontrados: muestra lista
                 //genera tabla
@@ -88,21 +93,25 @@ class Cliente extends CI_Controller {
     function ModificaCliente() {
         $this->funciones->VerificaSesion();
         
-        $this->form_validation->set_rules('Nombre', '"nombre"', 'xss_clean');
-        $this->form_validation->set_rules('Correo', 'correo electr&oacute;nico', 'xss_clean');
+        $this->form_validation->set_rules('Nombre', '"nombre"', 'trim|xss_clean');
+		$this->form_validation->set_rules('Contacto', '"nombre de contacto"', 'trim|xss_clean');
+        $this->form_validation->set_rules('NIT', '"NIT"', 'trim');
+        $this->form_validation->set_rules('Correo', 'correo electr&oacute;nico', 'trim|xss_clean');
         $data['EsCliente'] = $this->Cliente;
         if ($this->form_validation->run()) {
             $Accion = $this->input->post("submit");
             $data['VistaPrincipal'] = 'vista_mensaje';   
             if ($Accion == "guardar") {
-                $this->modelo_cliente->Update($this->input->post('CodCliente'), $this->input->post('Nombre'), 
-                                                $this->input->post('Contacto'), $this->input->post('NIT'), 
-                                                $this->input->post('Direccion'),  $this->input->post('Telefono'), 
-                                                $this->input->post('Correo'),  $this->input->post('Notas'));
+				$CodPersona = $this->input->post('CodPersona');
+                $this->modelo_persona->Update($CodPersona, $this->input->post('Nombre'), $this->input->post('Contacto'),
+												$this->input->post('NIT'), $this->input->post('Direccion'), $this->input->post('Zona'),
+												$this->input->post('Ciudad'), $this->input->post('Telefono'),
+												$this->input->post('Correo'), $this->input->post('Notas'));
+				$this->modelo_cliente->Update($CodPersona, $this->input->post('CodActividad'), $this->input->post('Limite'));
                 $data['Mensaje'] = 'Se han modificado los datos del cliente.';                
             }
             else if ($Accion == "borrar") {
-                $this->modelo_cliente->Delete($this->input->post('CodCliente'));
+                $this->modelo_cliente->Delete($this->input->post('CodPersona'));
                 $data['Mensaje'] = 'Los datos del cliente han sido eliminados.';
             }
             $this->load->view('vista_maestra', $data);
@@ -112,21 +121,22 @@ class Cliente extends CI_Controller {
         }
     }
  
-    function CargaVista($Vista, $CodCliente) {
+    function CargaVista($Vista, $CodPersona) {
 		$data['EsCliente'] = $this->Cliente;
-        $data['Fila'] = $this->modelo_cliente->getFila($CodCliente);
-        $data['VistaPrincipal'] = $Vista;
+        $data['Fila'] = $this->modelo_cliente->GetFila($CodPersona);
+        $data['ComboActividad'] = $this->modelo_actividad->ComboActividad($data['Fila']->CodActividadEconomica);
+		$data['VistaPrincipal'] = $Vista;
         $this->load->view('vista_maestra', $data);
     }
 
-    function BorrarCliente($CodCliente) {
-        $this->modelo_cliente->Delete($CodCliente);
+    function BorrarCliente($CodPersona) {
+        $this->modelo_cliente->Delete($CodPersona);
         redirect('cliente','refresh');
     }
     
     //callback
     function CorreoNuevo($s) {
-		if ( $this->modelo_cliente->ExisteCorreo($s) )	{
+		if ( $s!='' and $this->modelo_persona->ExisteCorreo($s) )	{
 			$this->form_validation->set_message('CorreoNuevo', 'La direcci&oacute;n de correo ya se encuentra registrada.');
 			return FALSE;
 		}

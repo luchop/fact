@@ -4,9 +4,10 @@ $(document).ready(function(){
  });
 </script>
 
-<div class="span-10 prefix-7 suffix-7 center last" id="Login">
+<div class="span-10 prefix-7 suffix-7 center last" id="Login" style='height: 370px;'>
     <form action="<?php echo base_url() ?>index.php/login" method="POST" id="formlogin">
-        <fieldset><legend>Ingreso</legend><br />   
+        <br /><br />
+		<fieldset><legend>&nbsp;&nbsp;Ingreso al sistema&nbsp;&nbsp;</legend><br />   
         <?php if(isset($Error)) echo $Error.'<br />'; ?>
         <div>
             <label class='Rotulo'>Usuario </label> <input type="text" name="NombreUsuario" id="NombreUsuario" maxlength="15" value="" />

@@ -102,7 +102,6 @@ a.vista {
     background-position:  right;
     border: 1px solid transparent;
     z-index: 100;
-
 }
 #logos{
     height: 100px;
@@ -172,29 +171,24 @@ form input,form select, form textarea:not(#Notas){
 form textarea {
     border:1px solid #cccccc;  
 }
-/*
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(82, 168, 236, 0.8);
-    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 8px rgba(82, 168, 236, 0.6);
-    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 8px rgba(82, 168, 236, 0.6);
-    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 8px rgba(82, 168, 236, 0.6);outline:0;outline:thin dotted \9;}
-*/
+
 
 /**************************************/
 /*               FOOTER               */
 /**************************************/
 #pie{
-    
-    background-image: url(../imagenes/pie.png);
-    
-    color:#fff;
+    background-image: url(../imagenes/pie.jpg);
+	background-repeat: no-repeat;
+    height: 86px;
+	/*color:#fff;
     font-family: monaco, "Lucida Console", courier, monospace;
     font-weight: bold;
     
-    vertical-align: middle;
-    height: 86px;
+    vertical-align: middle;*/
+    
 }
+/*
 #pie hr{
     background-color: transparent;
     height: 3px;
-}
+}*/

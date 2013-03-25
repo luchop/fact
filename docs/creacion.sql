@@ -89,7 +89,6 @@ CREATE TABLE cliente(
    CodPersona INTEGER NOT NULL PRIMARY KEY,
    CodActividadEconomica INTEGER NOT NULL,
    LimiteCredito numeric(10,2),
-   Cliente TINYINT DEFAULT 1,
    INDEX fk_cliente_idx (CodActividadEconomica ASC),
    CONSTRAINT fk_cliente
     FOREIGN KEY (CodActividadEconomica) REFERENCES actividad_economica(CodActividadEconomica)

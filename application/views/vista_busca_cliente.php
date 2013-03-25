@@ -14,10 +14,10 @@ $(document).ready(function() {
         },
         messages: {
             Nombre: {
-                minlength: "Debe registrar 3 caracteres o mas."
+                minlength: "Debe registrar 3 caracteres o m&aacute;s."
             },
             Contacto: {
-                minlength: "Debe registrar 3 caracteres o mas."
+                minlength: "Debe registrar 3 caracteres o m&aacute;s."
             },
             Correo: {
                 email: "Correo incorrecto.",
